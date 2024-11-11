@@ -1,3 +1,4 @@
+import { DottedSeparator } from "@/components/dotted-separator";
 import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card";
 
 export const SignInCard = () => {
@@ -6,7 +7,9 @@ export const SignInCard = () => {
       <CardHeader className="flex items-center justify-center text-center p-7">
         <CardTitle className="text-2xl">Welcome Back!</CardTitle>
       </CardHeader>
-      <div className="px-7"></div>
+      <div className="px-7 mb-2">
+        <DottedSeparator />
+      </div>
     </Card>
   );
 };
