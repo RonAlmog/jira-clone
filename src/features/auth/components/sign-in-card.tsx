@@ -14,6 +14,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().email().min(1, "Required"),
@@ -92,6 +93,15 @@ export const SignInCard = () => {
           Login with Github
         </Button>
       </CardContent>
+      <div className="px-7">
+        <DottedSeparator />
+      </div>
+      <div className="p-7 flex items-center justify-center">
+        <p>Don&apos;t have an account?</p>
+        <Link href="/sign-up">
+          <span className="text-blue-700 ml-2">Sign Up</span>
+        </Link>
+      </div>
     </Card>
   );
 };
