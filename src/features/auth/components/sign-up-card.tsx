@@ -1,3 +1,4 @@
+"use client";
 import { DottedSeparator } from "@/components/dotted-separator";
 import { Button } from "@/components/ui/button";
 import {
@@ -106,7 +107,7 @@ export const SignUpCard = () => {
               )}
             />
             <Button disabled={false} size="lg" className="w-full">
-              Log In
+              Register
             </Button>
           </form>
         </Form>
