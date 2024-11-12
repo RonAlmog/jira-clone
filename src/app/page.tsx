@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCurrent } from "@/features/auth/api/use-current";
 import { useLogout } from "@/features/auth/api/use-logout";
+import { UserButton } from "@/features/auth/components/user-button";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -19,7 +20,7 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-4 w-40 p-2">
       only logged in users!
-      <Button onClick={() => mutate()}>Log out</Button>
+      <UserButton />
       {/* <Button variant="primary" size="lg">
         Primary
       </Button>
