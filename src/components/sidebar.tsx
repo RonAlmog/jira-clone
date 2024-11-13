@@ -1,3 +1,16 @@
+import Image from "next/image";
+import Link from "next/link";
+import { DottedSeparator } from "./dotted-separator";
+import Navigation from "./navigation";
+
 export const Sidebar = () => {
-  return <aside>sidebar</aside>;
+  return (
+    <aside className="h-full bg-neutral-100 p-4 w-full">
+      <Link href="/">
+        <Image src="/jiraclone.svg" height={42} width={150} alt="Logo" />
+      </Link>
+      <DottedSeparator className="my-4" />
+      <Navigation />
+    </aside>
+  );
 };
