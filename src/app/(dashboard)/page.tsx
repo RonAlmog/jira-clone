@@ -12,23 +12,5 @@ export default async function Home() {
   if (!user) {
     redirect("/sign-in");
   }
-  return (
-    <div className="flex flex-col gap-4 w-40 p-2">
-      only logged in users!
-      <UserButton />
-      {/* <Button variant="primary" size="lg">
-        Primary
-      </Button>
-      <Button variant="secondary" size="sm">
-        Secondary
-      </Button>
-      <Button variant="destructive">destructive</Button>
-      <Button variant="ghost">ghost</Button>
-      <Button variant="link">Link</Button>
-      <Button variant="outline">outline</Button>
-      <Button variant="muted">Muted</Button>
-      <Button variant="teritary">teritary</Button>
-      <Input /> */}
-    </div>
-  );
+  return <div className="flex flex-col gap-4 w-40 p-2">home page here</div>;
 }
