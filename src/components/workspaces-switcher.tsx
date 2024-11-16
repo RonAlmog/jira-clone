@@ -10,16 +10,25 @@ import {
   SelectContent,
 } from "./ui/select";
 import { WrokspacesAvatar } from "@/features/workspaces/components/workspace-avatar";
+import { useRouter } from "next/navigation";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
 export const WorkspaceSwitcher = () => {
+  const router = useRouter();
   const { data: workspaces } = useGetWrokspaces();
+  const workspaceId = useWorkspaceId();
+
+  const onSelect = (id: string) => {
+    router.push(`/workspaces/${id}`);
+  };
+
   return (
     <div className="flex flex-col gap-y-2">
       <div className="flex items-center justify-between">
         <p className="text-xs uppercase text-neutral-500">Wrokspaces</p>
         <RiAddCircleFill className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition" />
       </div>
-      <Select>
+      <Select onValueChange={onSelect} value={workspaceId}>
         <SelectTrigger className="w-full bg-neutral-200 font-medium p-1">
           <SelectValue placeholder="No workspaces selected" />
         </SelectTrigger>
