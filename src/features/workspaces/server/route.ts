@@ -109,6 +109,41 @@ const app = new Hono()
       if (!member || member.role !== MemberRole.ADMIN) {
         return c.json({ error: "Unauthorized" }, 401);
       }
+
+      // upload image
+      // the uploaded image can be eigher a file, or string (64 base)
+      let uploadImageUrl: string | undefined;
+      if (image instanceof File) {
+        const file = await storage.createFile(
+          IMAGES_BUCKET_ID,
+          ID.unique(),
+          image
+        );
+
+        const arrayBuffer = await storage.getFilePreview(
+          IMAGES_BUCKET_ID,
+          file.$id
+        );
+
+        uploadImageUrl = `data:image/png;base64,${Buffer.from(
+          arrayBuffer
+        ).toString("base64")}`;
+      } else {
+        // already converted, just use it.
+        uploadImageUrl = image;
+      }
+
+      const workspace = await databases.updateDocument(
+        DATABASE_ID,
+        WORKSPACES_ID,
+        workspaceId,
+        {
+          name,
+          imageUrl: uploadImageUrl,
+        }
+      );
+
+      return c.json({ workspace });
     }
   );
 
