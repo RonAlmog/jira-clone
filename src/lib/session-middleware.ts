@@ -49,6 +49,17 @@ export const sessionMiddleware = createMiddleware<AdditionalContext>(
     c.set("storage", storage);
     c.set("user", user);
 
+    // Idea: add a param for admin/role, and optionally check if user is allowed to do the action...
+    // const member = await getMember({
+    //     databases,
+    //     workspaceId,
+    //     userId: user.$id,
+    //   });
+
+    //   if (!member || member.role !== MemberRole.ADMIN) {
+    //     return c.json({ error: "Unauthorized" }, 401);
+    //   }
+
     await next();
   }
 );
