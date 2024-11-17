@@ -7,7 +7,7 @@ import { ID, Query } from "node-appwrite";
 import { deleteCookie, setCookie } from "hono/cookie";
 
 import { sessionMiddleware } from "@/lib/session-middleware";
-import { createWorkspaceSchema } from "../schemas";
+import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";
 import {
   DATABASE_ID,
   IMAGES_BUCKET_ID,
@@ -16,6 +16,7 @@ import {
 } from "@/config";
 import { MemberRole } from "@/features/members/types";
 import { generateInviteCode } from "@/lib/utils";
+import { getMember } from "@/features/members/utils";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
@@ -85,6 +86,29 @@ const app = new Hono()
       });
 
       return c.json({ data: workspace });
+    }
+  )
+  .patch(
+    "/:workspaceId",
+    sessionMiddleware,
+    zValidator("form", updateWorkspaceSchema),
+    async (c) => {
+      const databases = c.get("databases");
+      const storage = c.get("storage");
+      const user = c.get("user");
+
+      const { workspaceId } = c.req.param();
+      const { name, image } = c.req.valid("form");
+
+      const member = await getMember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member || member.role !== MemberRole.ADMIN) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
     }
   );
 
