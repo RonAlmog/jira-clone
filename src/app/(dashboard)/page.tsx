@@ -1,13 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { getCurrent } from "@/features/auth/actions";
-import { useCurrent } from "@/features/auth/api/use-current";
-import { useLogout } from "@/features/auth/api/use-logout";
-import { UserButton } from "@/features/auth/components/user-button";
+import { getCurrent } from "@/features/auth/queries";
 import { getWorkspaces } from "@/features/workspaces/actions";
-import { CreateWorkspaceForm } from "@/features/workspaces/components/create-workspace-form";
-import { redirect, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const user = await getCurrent();
