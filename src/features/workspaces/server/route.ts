@@ -1,10 +1,7 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 
-import { z } from "zod";
-import { createAdminClient } from "@/lib/appwrite";
 import { ID, Query } from "node-appwrite";
-import { deleteCookie, setCookie } from "hono/cookie";
 
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";

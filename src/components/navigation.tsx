@@ -40,7 +40,6 @@ const Navigation = () => {
     <ul className="flex flex-col">
       {routes.map((item) => {
         const fullHref = `/workspaces/${workspaceId}${item.href}`;
-        console.log({ fullHref, pathname });
         const isActive = pathname === fullHref;
         const Icon = isActive ? item.activeIcon : item.icon;
         return (
