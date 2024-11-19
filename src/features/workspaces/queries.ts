@@ -59,3 +59,26 @@ export const getWorkspace = async ({ workspaceId }: GetWorkspaceProps) => {
     return null;
   }
 };
+
+// this allows get workspace without being a member yet.
+// for the join thru link
+export const getWorkspaceInfo = async ({ workspaceId }: GetWorkspaceProps) => {
+  try {
+    const { databases } = await createSessionClient();
+
+    // no need to be a member
+
+    const workspace = await databases.getDocument<Workspace>(
+      DATABASE_ID,
+      WORKSPACES_ID,
+      workspaceId
+    );
+
+    // for security, only return name
+    return {
+      name: workspace.name,
+    };
+  } catch {
+    return null;
+  }
+};
