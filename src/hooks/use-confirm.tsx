@@ -13,13 +13,13 @@ export const useConfirm = (
   title: string,
   message: string,
   variant: ButtonProps["variant"] = "primary"
-) => {
+): [() => JSX.Element, () => Promise<unknown>] => {
   const [promise, setPromise] = useState<{
     resolve: (value: boolean) => void;
   } | null>(null);
 
   const confirm = () => {
-    new Promise((resolve) => {
+    return new Promise((resolve) => {
       setPromise({ resolve });
     });
   };
@@ -39,7 +39,7 @@ export const useConfirm = (
     handleClose();
   };
 
-  const ConfirmationDialog = () => {
+  const ConfirmationDialog = () => (
     <ResponsiveModal open={promise !== null} onOpenChange={handleClose}>
       <Card className="w-full h-full border-none shadow-none">
         <CardContent className="pt-8">
@@ -65,8 +65,8 @@ export const useConfirm = (
           </div>
         </CardContent>
       </Card>
-    </ResponsiveModal>;
-  };
+    </ResponsiveModal>
+  );
 
   return [ConfirmationDialog, confirm];
 };

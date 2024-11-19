@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Workspace } from "../types";
 import { useUpdateWorkspace } from "../api/use-update-workspace";
+import { useConfirm } from "@/hooks/use-confirm";
 
 interface EditWorkspaceFormProps {
   onCancel?: () => void;
@@ -37,6 +38,12 @@ export const EditWorkspaceForm = ({
   const { mutate, isPending } = useUpdateWorkspace();
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [DeleteDialog, confirmDelete] = useConfirm(
+    "Delete Workspace",
+    "This cannot be undone",
+    "destructive"
+  );
+
   const form = useForm<z.infer<typeof updateWorkspaceSchema>>({
     resolver: zodResolver(updateWorkspaceSchema),
     defaultValues: {
@@ -44,6 +51,14 @@ export const EditWorkspaceForm = ({
       image: initialValues.imageUrl ?? undefined,
     },
   });
+
+  const handleDelete = async () => {
+    const ok = await confirmDelete();
+
+    if (!ok) return;
+
+    console.log("deleting...");
+  };
 
   const onSubmit = (values: z.infer<typeof updateWorkspaceSchema>) => {
     const finalValues = {
@@ -69,6 +84,7 @@ export const EditWorkspaceForm = ({
   };
   return (
     <div className="flex flex-col gap-y-4">
+      <DeleteDialog />
       <Card className="w-full h-full border-none shadow-none">
         <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
           <Button
@@ -221,7 +237,7 @@ export const EditWorkspaceForm = ({
               variant="destructive"
               type="button"
               disabled={isPending}
-              onClick={() => {}}
+              onClick={handleDelete}
             >
               Delete Workspace
             </Button>
