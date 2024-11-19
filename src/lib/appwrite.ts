@@ -1,5 +1,5 @@
 import "server-only"; // make sure this thing only run on server!
-import { Client, Account, Storage, Users, Databases } from "node-appwrite";
+import { Client, Account, Databases } from "node-appwrite";
 import { cookies } from "next/headers";
 import { AUTH_COOKIE } from "@/features/auth/constants";
 
