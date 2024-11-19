@@ -28,7 +28,7 @@ const app = new Hono()
         httpOnly: true,
         secure: true,
         sameSite: "strict",
-        maxAge: 60 * 60 + 24 * 30,
+        maxAge: 60 * 60 + 24 * 30 * 1000,
       });
 
       // console.log({ email, password });
