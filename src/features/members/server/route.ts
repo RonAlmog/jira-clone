@@ -9,6 +9,7 @@ import { Query } from "node-appwrite";
 import { MemberRole } from "../types";
 
 const app = new Hono()
+  // get all members IN A WORKSPACE
   .get(
     "/",
     sessionMiddleware,
@@ -18,6 +19,8 @@ const app = new Hono()
       const databases = c.get("databases");
       const user = c.get("user");
       const { workspaceId } = c.req.valid("query");
+      console.log({ user });
+      console.log({ workspaceId });
 
       const member = await getMember({
         databases,
@@ -25,13 +28,16 @@ const app = new Hono()
         userId: user.$id,
       });
 
+      console.log({ member });
+
       if (!member) {
-        return c.json({ error: "Unauthorized" }, 401);
+        return c.json({ error: "Unauthorized, no user" }, 401);
       }
 
       const members = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
         Query.equal("workspaceId", workspaceId),
       ]);
+      console.log({ members });
 
       const populatedMembers = await Promise.all(
         members.documents.map(async (member) => {
@@ -43,6 +49,8 @@ const app = new Hono()
           };
         })
       );
+
+      console.log({ populatedMembers });
 
       return c.json({
         data: {
@@ -63,6 +71,8 @@ const app = new Hono()
       memberId
     );
 
+    console.log({ memberToDelete });
+
     const allMembersInWorkspace = await databases.listDocuments(
       DATABASE_ID,
       MEMBERS_ID,
@@ -76,13 +86,21 @@ const app = new Hono()
       userId: user.$id,
     });
 
+    console.log({ member });
+
     if (!member) {
-      return c.json({ error: "Unauthorized" }, 401);
+      return c.json({ error: "Unauthorized, not a member" }, 401);
     }
 
     // only admin can remove someone else
-    if (member.$id !== memberToDelete.$id && member.role !== MemberRole.ADMIN) {
-      return c.json({ error: "Unauthorized" }, 401);
+    //if (member.$id !== memberToDelete.$id && member.role !== MemberRole.ADMIN) {
+    // my correction: only admin can remove anyone, including himself.
+    if (member.role !== MemberRole.ADMIN) {
+      console.log("not admin!");
+      return c.json(
+        { error: "Unauthorized, not admin trying to remove member" },
+        401
+      );
     }
 
     if (allMembersInWorkspace.total === 1) {

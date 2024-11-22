@@ -27,6 +27,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useDeleteWorkspace } from "../api/use-delete-workspace";
 import { toast } from "sonner";
 import { useResetInviteCode } from "../api/use-reset-invite-code";
+import { APP_URL } from "@/config";
 
 interface EditWorkspaceFormProps {
   onCancel?: () => void;
@@ -76,8 +77,8 @@ export const EditWorkspaceForm = ({
       { param: { workspaceId: initialValues.$id } },
       {
         onSuccess: () => {
-          // router.push("/");
-          window.location.href = "/";
+          router.push("/");
+          // window.location.href = "/";
         },
       }
     );
@@ -121,7 +122,7 @@ export const EditWorkspaceForm = ({
     }
   };
 
-  const fullInviteLink = `${window.location.origin}/workspaces/${initialValues.$id}/join/${initialValues.inviteCode}`;
+  const fullInviteLink = `${APP_URL}/workspaces/${initialValues.$id}/join/${initialValues.inviteCode}`;
 
   const handleCopyInviteClick = () => {
     navigator.clipboard
