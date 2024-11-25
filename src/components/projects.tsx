@@ -1,5 +1,6 @@
 "use client";
 import { useGetProjects } from "@/features/projects/api/use-get-projects";
+import { useCreateProjectModal } from "@/features/projects/hooks/use-create-project-modal";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -10,6 +11,7 @@ export const Projects = () => {
   const workspaceId = useWorkspaceId();
   const { data } = useGetProjects({ workspaceId });
   const pathname = usePathname();
+  const { open } = useCreateProjectModal();
 
   return (
     <div>
@@ -17,7 +19,7 @@ export const Projects = () => {
         <div className="flex items-center justify-between">
           <p className="text-xs uppercase text-neutral-500">Projects</p>
           <RiAddCircleFill
-            onClick={() => {}}
+            onClick={open}
             className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition"
           />
         </div>
