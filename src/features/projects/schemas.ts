@@ -19,5 +19,4 @@ export const updateProjectSchema = z.object({
       z.string().transform((value) => (value === "" ? undefined : value)),
     ])
     .optional(),
-  workspaceId: z.string(),
 });

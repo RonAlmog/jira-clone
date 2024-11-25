@@ -35,50 +35,42 @@ interface GetWorkspaceProps {
   workspaceId: string;
 }
 export const getWorkspace = async ({ workspaceId }: GetWorkspaceProps) => {
-  try {
-    const { databases, account } = await createSessionClient();
-    const user = await account.get();
+  const { databases, account } = await createSessionClient();
+  const user = await account.get();
 
-    const member = await getMember({
-      databases,
-      userId: user.$id,
-      workspaceId,
-    });
-    if (!member) {
-      return null;
-    }
-
-    const workspace = await databases.getDocument<Workspace>(
-      DATABASE_ID,
-      WORKSPACES_ID,
-      workspaceId
-    );
-
-    return workspace;
-  } catch {
-    return null;
+  const member = await getMember({
+    databases,
+    userId: user.$id,
+    workspaceId,
+  });
+  if (!member) {
+    throw new Error("Unauthorized");
   }
+
+  const workspace = await databases.getDocument<Workspace>(
+    DATABASE_ID,
+    WORKSPACES_ID,
+    workspaceId
+  );
+
+  return workspace;
 };
 
 // this allows get workspace without being a member yet.
 // for the join thru link
 export const getWorkspaceInfo = async ({ workspaceId }: GetWorkspaceProps) => {
-  try {
-    const { databases } = await createSessionClient();
+  const { databases } = await createSessionClient();
 
-    // no need to be a member
+  // no need to be a member
 
-    const workspace = await databases.getDocument<Workspace>(
-      DATABASE_ID,
-      WORKSPACES_ID,
-      workspaceId
-    );
+  const workspace = await databases.getDocument<Workspace>(
+    DATABASE_ID,
+    WORKSPACES_ID,
+    workspaceId
+  );
 
-    // for security, only return name
-    return {
-      name: workspace.name,
-    };
-  } catch {
-    return null;
-  }
+  // for security, only return name
+  return {
+    name: workspace.name,
+  };
 };
