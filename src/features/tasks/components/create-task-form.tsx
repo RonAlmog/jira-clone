@@ -59,6 +59,7 @@ export const CreateTaskForm = ({
       {
         onSuccess: () => {
           form.reset();
+          onCancel?.();
           // todo: redirect to new task
         },
       }
