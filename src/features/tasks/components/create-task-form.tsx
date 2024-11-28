@@ -75,6 +75,17 @@ export const CreateTaskForm = ({ onCancel }: CreateProjectFormProps) => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="dueDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Due Date</FormLabel>
+                    <FormControl>{/* date picker */}</FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <DottedSeparator className="py-7" />
             <div className="flex items-center justify-between">
