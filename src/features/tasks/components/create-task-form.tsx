@@ -19,6 +19,15 @@ import { Button } from "@/components/ui/button";
 import { useCreateTask } from "../api/use-create-task";
 import { cn } from "@/lib/utils";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { DatePicker } from "@/components/date-picker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { MemberAvatar } from "@/features/members/components/member-avatar";
 
 interface CreateProjectFormProps {
   onCancel?: () => void;
@@ -26,7 +35,11 @@ interface CreateProjectFormProps {
   memberOptions: { id: string; name: string }[];
 }
 
-export const CreateTaskForm = ({ onCancel }: CreateProjectFormProps) => {
+export const CreateTaskForm = ({
+  onCancel,
+  projectOptions,
+  memberOptions,
+}: CreateProjectFormProps) => {
   const workspaceId = useWorkspaceId();
 
   const { mutate, isPending } = useCreateTask();
@@ -81,8 +94,43 @@ export const CreateTaskForm = ({ onCancel }: CreateProjectFormProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Due Date</FormLabel>
-                    <FormControl>{/* date picker */}</FormControl>
+                    <FormControl>
+                      <DatePicker {...field} placeholder="Select a date" />
+                    </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="assigneeId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Assignee</FormLabel>
+                    <Select
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select assignee" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <FormMessage />
+                      <SelectContent>
+                        {memberOptions.map((member) => (
+                          <SelectItem key={member.id} value={member.id}>
+                            <div className="flex items-center gap-x-2">
+                              <MemberAvatar
+                                className="size-6"
+                                name={member.name}
+                              />
+                              {member.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormItem>
                 )}
               />
