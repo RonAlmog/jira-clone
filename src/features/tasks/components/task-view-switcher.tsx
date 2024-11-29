@@ -16,7 +16,7 @@ const TaskViewSwitcher = () => {
     defaultValue: "table",
   });
   const workspaceId = useWorkspaceId();
-  // take params from url (nuqs) and use them to filter the tasks
+
   const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
     workspaceId,
     projectId,

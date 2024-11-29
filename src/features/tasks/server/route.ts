@@ -48,7 +48,6 @@ const app = new Hono()
         Query.equal("workspaceId", workspaceId),
         Query.orderDesc("$createdAt"),
       ];
-      console.log("server", { status });
 
       if (projectId) {
         console.log({ projectId });
