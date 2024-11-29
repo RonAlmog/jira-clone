@@ -18,6 +18,7 @@ export const useGetTasks = ({
   assigneeId,
   dueDate,
 }: UseGetTasksProps) => {
+  console.log({ status });
   const query = useQuery({
     queryKey: ["tasks", workspaceId],
     queryFn: async () => {
