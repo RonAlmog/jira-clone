@@ -10,6 +10,7 @@ import { useDeleteTask } from "../api/use-delete-task";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useRouter } from "next/navigation";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { useEditTaskModal } from "../hooks/use-edit-task-modal";
 
 interface TaskActionProps {
   id: string;
@@ -20,6 +21,7 @@ interface TaskActionProps {
 export const TaskAction = ({ id, projectId, children }: TaskActionProps) => {
   const workspaceId = useWorkspaceId();
   const router = useRouter();
+  const { open } = useEditTaskModal();
   const [ConfirmationDialog, confirm] = useConfirm(
     "Delete task",
     "This action cannot be undone",
@@ -62,7 +64,10 @@ export const TaskAction = ({ id, projectId, children }: TaskActionProps) => {
             <ExternalLinkIcon className="size-4 mr-2 stroke-2" />
             Open Project
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => {}} className="font-medium p-[10px]">
+          <DropdownMenuItem
+            onClick={() => open(id)}
+            className="font-medium p-[10px]"
+          >
             <PencilIcon className="size-4 mr-2 stroke-2" />
             Edit Task
           </DropdownMenuItem>
