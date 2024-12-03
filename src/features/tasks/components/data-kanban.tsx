@@ -7,6 +7,7 @@ import {
 } from "@hello-pangea/dnd";
 import React, { useCallback, useEffect, useState } from "react";
 import { object } from "zod";
+import KanbanColumnHeader from "./kanban-column-header";
 
 interface DataKanbanProps {
   data: Task[];
@@ -56,7 +57,10 @@ export const DataKanban = ({ data }: DataKanbanProps) => {
               key={board}
               className="flex-1 mx-2 bg-muted p-1.5 rounded-md min-w-[200px]"
             >
-              {board}
+              <KanbanColumnHeader
+                board={board}
+                taskCount={tasks[board].length}
+              />
             </div>
           );
         })}
