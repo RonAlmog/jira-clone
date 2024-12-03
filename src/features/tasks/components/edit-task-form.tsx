@@ -17,7 +17,6 @@ import { DottedSeparator } from "@/components/dotted-separator";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { DatePicker } from "@/components/date-picker";
 import {
   Select,
@@ -44,8 +43,6 @@ export const EditTaskForm = ({
   memberOptions,
   initialValues,
 }: EditProjectFormProps) => {
-  const workspaceId = useWorkspaceId();
-
   const { mutate, isPending } = useUpdateTask();
 
   const form = useForm<z.infer<typeof createTasksSchema>>({
