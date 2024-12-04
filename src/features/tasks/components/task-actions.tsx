@@ -18,7 +18,7 @@ interface TaskActionProps {
   children: React.ReactNode;
 }
 
-export const TaskAction = ({ id, projectId, children }: TaskActionProps) => {
+export const TaskActions = ({ id, projectId, children }: TaskActionProps) => {
   const workspaceId = useWorkspaceId();
   const router = useRouter();
   const { open } = useEditTaskModal();

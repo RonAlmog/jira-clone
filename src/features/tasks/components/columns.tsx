@@ -8,7 +8,7 @@ import { MemberAvatar } from "@/features/members/components/member-avatar";
 import TaskDate from "./task-date";
 import { Badge } from "@/components/ui/badge";
 import { snakeCaseToTitleCase } from "@/lib/utils";
-import { TaskAction } from "./task-actions";
+import { TaskActions } from "./task-actions";
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -126,11 +126,11 @@ export const columns: ColumnDef<Task>[] = [
       const id = row.original.$id;
       const projectId = row.original.projectId;
       return (
-        <TaskAction id={id} projectId={projectId}>
+        <TaskActions id={id} projectId={projectId}>
           <Button variant="ghost" className="size-8 p-0">
             <MoreVertical className="size-4" />
           </Button>
-        </TaskAction>
+        </TaskActions>
       );
     },
   },
