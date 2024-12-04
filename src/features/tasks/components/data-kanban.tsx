@@ -49,8 +49,93 @@ export const DataKanban = ({ data }: DataKanbanProps) => {
 
     return initialTasks;
   });
+
+  const onDragEnd = useCallback((result: DropResult) => {
+    if (!result.destination) return;
+
+    const { source, destination } = result;
+    const sourceStatus = source.droppableId as TaskStatus;
+    const destStatus = destination.droppableId as TaskStatus;
+
+    let updatesPayload: {
+      $id: string;
+      status: TaskStatus;
+      position: number;
+    }[] = [];
+
+    setTasks((prevTasks) => {
+      const newTasks = { ...prevTasks };
+
+      // safely remove task from source column
+      const sourceColumn = [...newTasks[sourceStatus]];
+      const [movedTask] = sourceColumn.splice(source.index, 1);
+
+      // if there is no moved task (shouldn't happen, but just in case), return the previous state
+      if (!movedTask) {
+        console.log("No task found at the source index");
+        return prevTasks;
+      }
+
+      // create new task object with potentially updated status
+      const updatedMovedTask =
+        sourceStatus !== destStatus
+          ? { ...movedTask, status: destStatus }
+          : movedTask;
+
+      // update the source column
+      newTasks[sourceStatus] = sourceColumn;
+
+      // add the task to the destination column
+      const destColumn = [...newTasks[destStatus]];
+      destColumn.splice(destination.index, 0, updatedMovedTask);
+      newTasks[destStatus] = destColumn;
+
+      // prepare minimal update payloads
+      updatesPayload = [];
+
+      // always update the moved task
+      updatesPayload.push({
+        $id: updatedMovedTask.$id,
+        status: destStatus,
+        position: Math.min((destination.index + 1) * 1000, 1000000),
+      });
+
+      // update position for affected tasks in the destination column
+      newTasks[destStatus].forEach((task, index) => {
+        if (task && task.$id !== updatedMovedTask.$id) {
+          const newPosition = Math.min((index + 1) * 1000, 1000000);
+          if (task.position !== newPosition) {
+            updatesPayload.push({
+              $id: task.$id,
+              status: destStatus,
+              position: newPosition,
+            });
+          }
+        }
+      });
+
+      // if the task moved between columns, update positions in the source column
+      if (sourceStatus !== destStatus) {
+        newTasks[sourceStatus].forEach((task, index) => {
+          if (task) {
+            const newPosition = Math.min((index + 1) * 1000, 1000000);
+            if (task.position !== newPosition) {
+              updatesPayload.push({
+                $id: task.$id,
+                status: sourceStatus,
+                position: newPosition,
+              });
+            }
+          }
+        });
+      }
+
+      return newTasks;
+    });
+  }, []);
+
   return (
-    <DragDropContext onDragEnd={() => {}}>
+    <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex overflow-x-auto">
         {boards.map((board) => {
           return (
@@ -86,6 +171,7 @@ export const DataKanban = ({ data }: DataKanbanProps) => {
                         )}
                       </Draggable>
                     ))}
+                    {provided.placeholder}
                   </div>
                 )}
               </Droppable>
