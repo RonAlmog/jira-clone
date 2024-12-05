@@ -6,15 +6,17 @@ import {
   DropResult,
 } from "@hello-pangea/dnd";
 import React, { useCallback, useEffect, useState } from "react";
-import { object } from "zod";
 import KanbanColumnHeader from "./kanban-column-header";
 import KanbanCard from "./kanban-card";
 
 interface DataKanbanProps {
   data: Task[];
+  onChange: (
+    tasks: { $id: string; status: TaskStatus; position: number }[]
+  ) => void;
 }
 
-export const DataKanban = ({ data }: DataKanbanProps) => {
+export const DataKanban = ({ data, onChange }: DataKanbanProps) => {
   const boards: TaskStatus[] = [
     TaskStatus.BACKLOG,
     TaskStatus.TODO,
@@ -50,89 +52,115 @@ export const DataKanban = ({ data }: DataKanbanProps) => {
     return initialTasks;
   });
 
-  const onDragEnd = useCallback((result: DropResult) => {
-    if (!result.destination) return;
+  // whenever data changes (like after update), update tasks
+  useEffect(() => {
+    const newTasks: TaskState = {
+      [TaskStatus.BACKLOG]: [],
+      [TaskStatus.TODO]: [],
+      [TaskStatus.IN_PROGRESS]: [],
+      [TaskStatus.IN_REVIEW]: [],
+      [TaskStatus.DONE]: [],
+    };
+    data.forEach((task) => {
+      newTasks[task.status].push(task);
+    });
 
-    const { source, destination } = result;
-    const sourceStatus = source.droppableId as TaskStatus;
-    const destStatus = destination.droppableId as TaskStatus;
+    // sort initial tasks by position
+    Object.keys(newTasks).forEach((status) => {
+      newTasks[status as TaskStatus].sort((a, b) => a.position - b.position);
+    });
 
-    let updatesPayload: {
-      $id: string;
-      status: TaskStatus;
-      position: number;
-    }[] = [];
+    setTasks(newTasks);
+  }, [data]);
 
-    setTasks((prevTasks) => {
-      const newTasks = { ...prevTasks };
+  const onDragEnd = useCallback(
+    (result: DropResult) => {
+      if (!result.destination) return;
 
-      // safely remove task from source column
-      const sourceColumn = [...newTasks[sourceStatus]];
-      const [movedTask] = sourceColumn.splice(source.index, 1);
+      const { source, destination } = result;
+      const sourceStatus = source.droppableId as TaskStatus;
+      const destStatus = destination.droppableId as TaskStatus;
 
-      // if there is no moved task (shouldn't happen, but just in case), return the previous state
-      if (!movedTask) {
-        console.log("No task found at the source index");
-        return prevTasks;
-      }
+      let updatesPayload: {
+        $id: string;
+        status: TaskStatus;
+        position: number;
+      }[] = [];
 
-      // create new task object with potentially updated status
-      const updatedMovedTask =
-        sourceStatus !== destStatus
-          ? { ...movedTask, status: destStatus }
-          : movedTask;
+      setTasks((prevTasks) => {
+        const newTasks = { ...prevTasks };
 
-      // update the source column
-      newTasks[sourceStatus] = sourceColumn;
+        // safely remove task from source column
+        const sourceColumn = [...newTasks[sourceStatus]];
+        const [movedTask] = sourceColumn.splice(source.index, 1);
 
-      // add the task to the destination column
-      const destColumn = [...newTasks[destStatus]];
-      destColumn.splice(destination.index, 0, updatedMovedTask);
-      newTasks[destStatus] = destColumn;
-
-      // prepare minimal update payloads
-      updatesPayload = [];
-
-      // always update the moved task
-      updatesPayload.push({
-        $id: updatedMovedTask.$id,
-        status: destStatus,
-        position: Math.min((destination.index + 1) * 1000, 1000000),
-      });
-
-      // update position for affected tasks in the destination column
-      newTasks[destStatus].forEach((task, index) => {
-        if (task && task.$id !== updatedMovedTask.$id) {
-          const newPosition = Math.min((index + 1) * 1000, 1000000);
-          if (task.position !== newPosition) {
-            updatesPayload.push({
-              $id: task.$id,
-              status: destStatus,
-              position: newPosition,
-            });
-          }
+        // if there is no moved task (shouldn't happen, but just in case), return the previous state
+        if (!movedTask) {
+          console.log("No task found at the source index");
+          return prevTasks;
         }
-      });
 
-      // if the task moved between columns, update positions in the source column
-      if (sourceStatus !== destStatus) {
-        newTasks[sourceStatus].forEach((task, index) => {
-          if (task) {
+        // create new task object with potentially updated status
+        const updatedMovedTask =
+          sourceStatus !== destStatus
+            ? { ...movedTask, status: destStatus }
+            : movedTask;
+
+        // update the source column
+        newTasks[sourceStatus] = sourceColumn;
+
+        // add the task to the destination column
+        const destColumn = [...newTasks[destStatus]];
+        destColumn.splice(destination.index, 0, updatedMovedTask);
+        newTasks[destStatus] = destColumn;
+
+        // prepare minimal update payloads
+        updatesPayload = [];
+
+        // always update the moved task
+        updatesPayload.push({
+          $id: updatedMovedTask.$id,
+          status: destStatus,
+          position: Math.min((destination.index + 1) * 1000, 1000000),
+        });
+
+        // update position for affected tasks in the destination column
+        newTasks[destStatus].forEach((task, index) => {
+          if (task && task.$id !== updatedMovedTask.$id) {
             const newPosition = Math.min((index + 1) * 1000, 1000000);
             if (task.position !== newPosition) {
               updatesPayload.push({
                 $id: task.$id,
-                status: sourceStatus,
+                status: destStatus,
                 position: newPosition,
               });
             }
           }
         });
-      }
 
-      return newTasks;
-    });
-  }, []);
+        // if the task moved between columns, update positions in the source column
+        if (sourceStatus !== destStatus) {
+          newTasks[sourceStatus].forEach((task, index) => {
+            if (task) {
+              const newPosition = Math.min((index + 1) * 1000, 1000000);
+              if (task.position !== newPosition) {
+                updatesPayload.push({
+                  $id: task.$id,
+                  status: sourceStatus,
+                  position: newPosition,
+                });
+              }
+            }
+          });
+        }
+
+        return newTasks;
+      });
+
+      onChange(updatesPayload);
+    },
+    [onChange]
+  );
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
