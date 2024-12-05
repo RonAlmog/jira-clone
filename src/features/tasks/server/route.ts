@@ -289,6 +289,72 @@ const app = new Hono()
     await databases.deleteDocument(DATABASE_ID, TASKS_ID, taskId);
 
     return c.json({ data: { $id: task.$id } });
-  });
+  })
+  .post(
+    "/bulk-update",
+    sessionMiddleware,
+    zValidator(
+      "json",
+      z.object({
+        tasks: z.array(
+          z.object({
+            $id: z.string(),
+            status: z.nativeEnum(TaskStatus),
+            position: z.number().int().positive(),
+          })
+        ),
+      })
+    ),
+    async (c) => {
+      const user = c.get("user");
+      const databases = c.get("databases");
+      const { tasks } = c.req.valid("json");
+
+      const tasksToUpdate = await databases.listDocuments<Task>(
+        DATABASE_ID,
+        TASKS_ID,
+        [
+          Query.contains(
+            "$id",
+            tasks.map((task) => task.$id)
+          ),
+        ]
+      );
+
+      // set, because we only want unique values.
+      // we only allow changing tasks within the same workspace.
+      const workspaceIds = new Set(
+        tasksToUpdate.documents.map((task) => task.workspaceId)
+      );
+      if (workspaceIds.size !== 1) {
+        return c.json({ error: "All tasks must belong to the same workspace" });
+      }
+
+      const workspaceId = workspaceIds.values().next().value!;
+
+      // member must be part of this workspace
+      const member = await getMember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+      if (!member) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const updatedTasks = await Promise.all(
+        tasks.map(async (task) => {
+          const { $id, status, position } = task;
+
+          return databases.updateDocument<Task>(DATABASE_ID, TASKS_ID, $id, {
+            status,
+            position,
+          });
+        })
+      );
+
+      return c.json({ data: updatedTasks });
+    }
+  );
 
 export default app;
