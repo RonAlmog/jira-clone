@@ -14,6 +14,7 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./data-calendar.css";
 import EventCard from "./event-card";
+import CustomToolbar from "./custom-toolbar";
 
 const locales = {
   "en-US": enUS,
@@ -76,6 +77,9 @@ const DataCalendar = ({ data }: DataCalendarProps) => {
             assignee={event.assignee}
             project={event.project}
           />
+        ),
+        toolbar: () => (
+          <CustomToolbar date={value} onNavigate={handleNavigate} />
         ),
       }}
     />
