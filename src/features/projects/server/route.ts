@@ -9,6 +9,29 @@ import { createProjectSchema, updateProjectSchema } from "../schemas";
 import { Project } from "../types";
 
 const app = new Hono()
+  .get("/:projectId", sessionMiddleware, async (c) => {
+    const databases = c.get("databases");
+    const user = c.get("user");
+    const { projectId } = c.req.param();
+
+    const project = await databases.getDocument<Project>(
+      DATABASE_ID,
+      PROJECTS_ID,
+      projectId
+    );
+
+    // verify user is allowed to get a project in this workspace
+    const member = await getMember({
+      databases,
+      workspaceId: project.workspaceId,
+      userId: user.$id,
+    });
+    if (!member) {
+      return c.json({ Error: "Unauthorized" }, 401);
+    }
+
+    return c.json({ data: project });
+  })
   .post(
     "/",
     sessionMiddleware,
