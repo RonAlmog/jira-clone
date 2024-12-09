@@ -80,9 +80,8 @@ export const EditProjectForm = ({
     mutate(
       { form: finalValues, param: { projectId: initialValues.$id } },
       {
-        onSuccess: () => {
-          form.reset();
-          // router.push(`/workspaces/${data.$id}`);
+        onSuccess: ({ data }) => {
+          //form.reset();
         },
       }
     );
@@ -116,7 +115,7 @@ export const EditProjectForm = ({
             Back <ArrowLeftIcon className="size-4 mr-2" />
           </Button>
           <CardTitle className="text-xl font-bold">
-            Create a new project
+            {initialValues.name}
           </CardTitle>
         </CardHeader>
 
