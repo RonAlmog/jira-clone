@@ -56,7 +56,7 @@ const app = new Hono()
       return c.json({ error: "Unauthorized" }, 401);
     }
 
-    const workspace = await databases.getDocument(
+    const workspace = await databases.getDocument<Workspace>(
       DATABASE_ID,
       WORKSPACES_ID,
       workspaceId

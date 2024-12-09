@@ -108,7 +108,7 @@ export const EditWorkspaceForm = ({
       { form: finalValues, param: { workspaceId: initialValues.$id } },
       {
         onSuccess: () => {
-          form.reset();
+          // form.reset();
           // router.push(`/workspaces/${data.$id}`);
         },
       }
@@ -148,7 +148,7 @@ export const EditWorkspaceForm = ({
             Back <ArrowLeftIcon className="size-4 mr-2" />
           </Button>
           <CardTitle className="text-xl font-bold">
-            Create a new workspace
+            {initialValues.name}
           </CardTitle>
         </CardHeader>
 
