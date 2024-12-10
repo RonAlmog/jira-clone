@@ -26,8 +26,7 @@ export const useUpdateTask = () => {
     },
     onSuccess: ({ data }) => {
       toast.success("Task updated");
-      // router.refresh();
-      // is invalidating enough to refresh the page, or we need router.refresh?
+      // invalidating is enough to refresh the page, no need router.refresh
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["tasks", data.$id] });
     },

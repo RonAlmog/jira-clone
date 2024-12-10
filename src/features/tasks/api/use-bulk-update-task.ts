@@ -26,8 +26,6 @@ export const useBulkUpdateTask = () => {
     },
     onSuccess: () => {
       toast.success("Tasks updated");
-      // router.refresh();
-      // is invalidating enough to refresh the page, or we need router.refresh?
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
     onError: () => {
