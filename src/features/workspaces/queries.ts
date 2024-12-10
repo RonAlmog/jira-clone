@@ -2,8 +2,6 @@
 
 import { Query } from "node-appwrite";
 import { DATABASE_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config";
-import { getMember } from "../members/utils";
-import { Workspace } from "./types";
 import { createSessionClient } from "@/lib/appwrite";
 
 export const getWorkspaces = async () => {
@@ -29,48 +27,4 @@ export const getWorkspaces = async () => {
   } catch {
     return { documents: [], total: 0 };
   }
-};
-
-interface GetWorkspaceProps {
-  workspaceId: string;
-}
-export const getWorkspace = async ({ workspaceId }: GetWorkspaceProps) => {
-  const { databases, account } = await createSessionClient();
-  const user = await account.get();
-
-  const member = await getMember({
-    databases,
-    userId: user.$id,
-    workspaceId,
-  });
-  if (!member) {
-    throw new Error("Unauthorized");
-  }
-
-  const workspace = await databases.getDocument<Workspace>(
-    DATABASE_ID,
-    WORKSPACES_ID,
-    workspaceId
-  );
-
-  return workspace;
-};
-
-// this allows get workspace without being a member yet.
-// for the join thru link
-export const getWorkspaceInfo = async ({ workspaceId }: GetWorkspaceProps) => {
-  const { databases } = await createSessionClient();
-
-  // no need to be a member
-
-  const workspace = await databases.getDocument<Workspace>(
-    DATABASE_ID,
-    WORKSPACES_ID,
-    workspaceId
-  );
-
-  // for security, only return name
-  return {
-    name: workspace.name,
-  };
 };

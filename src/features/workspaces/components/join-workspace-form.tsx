@@ -18,6 +18,8 @@ import { useRouter } from "next/navigation";
 interface JoinWorkspaceFormProps {
   initialValues: {
     name: string;
+    $id: string;
+    imageUrl: string;
   };
 }
 export const JoinWorkspaceForm = ({

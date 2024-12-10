@@ -3,7 +3,6 @@ import { InferRequestType, InferResponseType } from "hono";
 import { toast } from "sonner";
 
 import { client } from "@/lib/rpc";
-import { useRouter } from "next/navigation";
 
 // ResponseType can be either error or data. specify 200 to only take the data part.
 type ResponseType = InferResponseType<
@@ -15,7 +14,6 @@ type RequestType = InferRequestType<
 >;
 
 export const useUpdateWorkspace = () => {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ form, param }) => {
