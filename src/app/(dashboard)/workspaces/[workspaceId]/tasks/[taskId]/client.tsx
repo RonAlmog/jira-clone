@@ -20,6 +20,7 @@ export const TaskPageClient = () => {
   if (!data) {
     <PageError message="Task not found" />;
   }
+
   return (
     <div className="flex flex-col">
       <TaskBreadcrumbs project={data?.project!} task={data!} />

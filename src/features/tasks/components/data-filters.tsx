@@ -96,13 +96,15 @@ export const DataFilters = ({ hideProjectFilter }: DataFiltersProps) => {
           <SelectItem value="all">All assignees</SelectItem>
           <SelectSeparator />
           {memberOptions?.map((member) => (
-            <SelectItem value={member.value}>{member.label}</SelectItem>
+            <SelectItem key={member.value} value={member.value}>
+              {member.label}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>
       {!hideProjectFilter && (
         <Select
-          defaultValue={assigneeId ?? undefined}
+          defaultValue={projectId ?? undefined}
           onValueChange={(value) => {
             onProjectChange(value);
           }}
@@ -117,7 +119,9 @@ export const DataFilters = ({ hideProjectFilter }: DataFiltersProps) => {
             <SelectItem value="all">All projects</SelectItem>
             <SelectSeparator />
             {projectOptions?.map((project) => (
-              <SelectItem value={project.value}>{project.label}</SelectItem>
+              <SelectItem key={project.value} value={project.value}>
+                {project.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
