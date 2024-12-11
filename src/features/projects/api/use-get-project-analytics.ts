@@ -6,6 +6,7 @@ interface UseGetPorjectAnlayticsProps {
   projectId: string;
 }
 
+// infer the type of the response from backend endpoint!
 export type ProjectAnalyticsResponse = InferResponseType<
   (typeof client.api.projects)[":projectId"]["analytics"]["$get"],
   200
