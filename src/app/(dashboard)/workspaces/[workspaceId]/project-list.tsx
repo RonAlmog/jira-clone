@@ -27,10 +27,10 @@ export const ProjectList = ({ projects, total }: ProjectListProps) => {
   const { open: createProject } = useCreateProjectModal();
   return (
     <div className="flex flex-col gap-y-4 col-span-1">
-      <div className="bg-muted rounded-lg p-4">
+      <div className="bg-white border rounded-lg p-4">
         <div className="flex items-center justify-between">
           <p>Projects ({total})</p>
-          <Button variant="muted" size="icon" onClick={createProject}>
+          <Button variant="secondary" size="icon" onClick={createProject}>
             <PlusIcon className="size-4 text-neutral-400" />
           </Button>
         </div>
@@ -56,12 +56,9 @@ export const ProjectList = ({ projects, total }: ProjectListProps) => {
             </li>
           ))}
           <li className="text-sm text-muted-foreground hidden first-of-type:block">
-            No Tasks found
+            No Projects found
           </li>
         </ul>
-        <Button variant="muted" className="mt-4 w-full" asChild>
-          <Link href={`/workspaces/${workspaceId}/tasks`}>Show All</Link>
-        </Button>
       </div>
     </div>
   );

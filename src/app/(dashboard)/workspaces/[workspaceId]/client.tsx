@@ -14,6 +14,7 @@ import { useGetWorkspaceAnalytics } from "@/features/workspaces/api/use-get-work
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { TaskList } from "./task-list";
 import { ProjectList } from "./project-list";
+import { MembersList } from "./members-list";
 
 const WorkspaceIdClient = () => {
   const workspaceId = useWorkspaceId();
@@ -50,6 +51,7 @@ const WorkspaceIdClient = () => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <TaskList tasks={tasks.documents} total={tasks.total} />
         <ProjectList projects={projects.documents} total={projects.total} />
+        <MembersList members={members.documents} total={members.total} />
       </div>
     </div>
   );
