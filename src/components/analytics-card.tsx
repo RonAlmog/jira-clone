@@ -1,9 +1,8 @@
 import {
   Card,
-  CardContent,
-  CardTitle,
   CardHeader,
   CardDescription,
+  CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
@@ -44,6 +43,7 @@ const AnalyticsCard = ({
             </span>
           </div>
         </div>
+        <CardTitle className="text-3xl font-semibold">{value}</CardTitle>
       </CardHeader>
     </Card>
   );

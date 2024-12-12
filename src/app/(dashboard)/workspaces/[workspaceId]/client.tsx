@@ -7,7 +7,6 @@ import PageLoader from "@/components/page-loader";
 
 import { useGetMembers } from "@/features/members/api/use-get-members";
 import { useGetProjects } from "@/features/projects/api/use-get-projects";
-import { useCreateProjectModal } from "@/features/projects/hooks/use-create-project-modal";
 import { useGetTasks } from "@/features/tasks/api/use-get-tasks";
 
 import { useGetWorkspaceAnalytics } from "@/features/workspaces/api/use-get-workspace-analytics";
@@ -29,8 +28,6 @@ const WorkspaceIdClient = () => {
   const { data: members, isLoading: isLoadingMembers } = useGetMembers({
     workspaceId,
   });
-
-  const { open: createProject } = useCreateProjectModal();
 
   const isLoading =
     isLoadingAnalytics ||

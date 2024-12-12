@@ -1,21 +1,10 @@
-import { PlusIcon, CalendarIcon, SettingsIcon } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardTitle,
-  CardHeader,
-  CardDescription,
-} from "@/components/ui/card";
-import { formatDistanceToNow } from "date-fns";
+import { SettingsIcon } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { useCreateTaskModal } from "@/features/tasks/hooks/use-create-task-modal";
 import { DottedSeparator } from "@/components/dotted-separator";
 import { Button } from "@/components/ui/button";
 
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-import { Project } from "@/features/projects/types";
-import { useCreateProjectModal } from "@/features/projects/hooks/use-create-project-modal";
-import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 import { Member } from "@/features/members/types";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
 

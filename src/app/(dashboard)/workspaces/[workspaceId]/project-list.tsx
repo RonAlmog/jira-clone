@@ -1,14 +1,6 @@
-import { PlusIcon, CalendarIcon, SettingsIcon } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardTitle,
-  CardHeader,
-  CardDescription,
-} from "@/components/ui/card";
-import { formatDistanceToNow } from "date-fns";
+import { PlusIcon } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { useCreateTaskModal } from "@/features/tasks/hooks/use-create-task-modal";
 import { DottedSeparator } from "@/components/dotted-separator";
 import { Button } from "@/components/ui/button";
 
