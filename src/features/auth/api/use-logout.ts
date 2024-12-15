@@ -22,8 +22,8 @@ export const useLogout = () => {
     onSuccess: () => {
       router.refresh();
       toast.success("Logged out");
-      queryClient.invalidateQueries({ queryKey: ["current"] });
-      queryClient.invalidateQueries({ queryKey: ["workspaces"] });
+      // no params means: invalidate all queries!!
+      queryClient.invalidateQueries();
     },
     onError: () => {
       toast.error("Failed to log out");
