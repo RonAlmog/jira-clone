@@ -19,7 +19,7 @@ const app = new Hono()
     const { projectId } = c.req.param();
 
     // use db shortcut
-    // const project:Project = await db.projects.get(projectId);
+    // const project = await db.projects.get(projectId);
     // console.log({ project });
 
     const project = await databases.getDocument<Project>(

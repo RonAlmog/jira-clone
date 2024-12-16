@@ -23,7 +23,8 @@ export const getDb = (databases: Databases) => {
 
   collections.forEach((col: DbType) => {
     db[col.name] = {
-      get: (id: string) => databases.getDocument(col.databaseId, col.id, id),
+      get: async (id: string) =>
+        await databases.getDocument(col.databaseId, col.id, id),
       list: (queries: string[]) =>
         databases.listDocuments(col.databaseId!, col.id!, queries),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
