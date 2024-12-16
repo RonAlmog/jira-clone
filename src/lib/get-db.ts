@@ -39,7 +39,5 @@ export const getDb = (databases: Databases) => {
     };
   });
 
-  console.log({ db });
-
   return db;
 };
