@@ -9,18 +9,24 @@ import { createProjectSchema, updateProjectSchema } from "../schemas";
 import { Project } from "../types";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import { TaskStatus } from "@/features/tasks/types";
-import { getDb } from "@/lib/get-db";
+// import { getDb } from "@/lib/get-db";
 
 const app = new Hono()
   .get("/:projectId", sessionMiddleware, async (c) => {
     const databases = c.get("databases");
-    const db = await getDb(databases);
+    // const db = await getDb(databases);
     const user = c.get("user");
     const { projectId } = c.req.param();
 
     // use db shortcut
-    const project = await db.projects.get(projectId);
+    // const project:Project = await db.projects.get(projectId);
     // console.log({ project });
+
+    const project = await databases.getDocument<Project>(
+      DATABASE_ID,
+      PROJECTS_ID,
+      projectId
+    );
 
     // verify user is allowed to get a project in this workspace
     const member = await getMember({
