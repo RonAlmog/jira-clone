@@ -66,8 +66,6 @@ const app = new Hono()
       memberId
     );
 
-    console.log({ memberToDelete });
-
     const allMembersInWorkspace = await databases.listDocuments(
       DATABASE_ID,
       MEMBERS_ID,
@@ -80,8 +78,6 @@ const app = new Hono()
       workspaceId: memberToDelete.workspaceId,
       userId: user.$id,
     });
-
-    console.log({ member });
 
     if (!member) {
       return c.json({ error: "Unauthorized, not a member" }, 401);

@@ -27,7 +27,6 @@ export const SignInCard = () => {
     resolver: zodResolver(loginSchema),
   });
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    console.log({ values });
     mutate({ json: values });
   };
   return (

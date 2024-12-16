@@ -41,7 +41,6 @@ export const DataFilters = ({ hideProjectFilter }: DataFiltersProps) => {
     useTaskFilters();
 
   const onStatusChange = (value: string) => {
-    console.log("status change:", value);
     setFilters({ status: value === "all" ? null : (value as TaskStatus) });
   };
 
