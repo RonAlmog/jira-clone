@@ -1,6 +1,7 @@
 import { Databases, ID, Models } from "node-appwrite";
+import { collections } from "./collections";
 
-type DbType = {
+export type DbType = {
   databaseId: string;
   id: string;
   name: string;
@@ -18,19 +19,6 @@ type collectionType = {
 type dbOperation = Record<string, collectionType>;
 
 export const getDb = (databases: Databases) => {
-  const collections: DbType[] = [
-    {
-      databaseId: process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-      id: process.env.NEXT_PUBLIC_APPWRITE_WORKSPACES_ID!,
-      name: "workspaces",
-    },
-    {
-      databaseId: process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-      id: process.env.NEXT_PUBLIC_APPWRITE_PROJECTS_ID!,
-      name: "projects",
-    },
-  ];
-
   const db: dbOperation = {};
 
   collections.forEach((col: DbType) => {
