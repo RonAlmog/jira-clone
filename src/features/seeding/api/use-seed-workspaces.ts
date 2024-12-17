@@ -24,7 +24,7 @@ export const useSeedWorkspaces = () => {
     },
     onSuccess: () => {
       toast.success("Workspaces seeded");
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["seed-workspaces"] });
     },
     onError: () => {
       toast.error("Failed to create project");
