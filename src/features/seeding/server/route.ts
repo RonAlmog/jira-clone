@@ -4,7 +4,7 @@ import { workspaces } from "../data/workspaces";
 import { DATABASE_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config";
 import { ID } from "node-appwrite";
 import { generateInviteCode } from "@/lib/utils";
-import { Member, MemberRole } from "@/features/members/types";
+import { MemberRole } from "@/features/members/types";
 import { deleteAllSchema } from "../schemas";
 import { zValidator } from "@hono/zod-validator";
 
@@ -25,7 +25,7 @@ const app = new Hono()
           WORKSPACES_ID,
           []
         );
-        const promises: Promise<{}>[] = [];
+        const promises: Promise<unknown>[] = [];
         workspaces.documents.forEach((ws) => {
           const promise = databases.deleteDocument(
             DATABASE_ID,
@@ -73,7 +73,7 @@ const app = new Hono()
           MEMBERS_ID,
           []
         );
-        const promises: Promise<{}>[] = [];
+        const promises: Promise<unknown>[] = [];
         members.documents.forEach((member) => {
           const promise = databases.deleteDocument(
             DATABASE_ID,
