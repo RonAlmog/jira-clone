@@ -1,7 +1,8 @@
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { Hono } from "hono";
 import { workspaces } from "../data/workspaces";
-import { DATABASE_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config";
+import { projects } from "../data/projects";
+import { DATABASE_ID, MEMBERS_ID, PROJECTS_ID, WORKSPACES_ID } from "@/config";
 import { ID } from "node-appwrite";
 import { generateInviteCode } from "@/lib/utils";
 import { MemberRole } from "@/features/members/types";
@@ -97,6 +98,59 @@ const app = new Hono()
           userId: user.$id,
           workspaceId: ws.$id,
           role: MemberRole.ADMIN,
+        });
+      });
+
+      return c.json({ success: true });
+    }
+  )
+  .post(
+    "/projects",
+    sessionMiddleware,
+    zValidator("json", deleteAllSchema),
+    async (c) => {
+      const databases = c.get("databases");
+      const user = c.get("user");
+      const { deleteAll } = c.req.valid("json");
+
+      // delete all projects before seeding
+      if (deleteAll) {
+        const projects = await databases.listDocuments(
+          DATABASE_ID,
+          PROJECTS_ID,
+          []
+        );
+        const promises: Promise<unknown>[] = [];
+        projects.documents.forEach((project) => {
+          const promise = databases.deleteDocument(
+            DATABASE_ID,
+            PROJECTS_ID,
+            project.$id
+          );
+          promises.push(promise);
+        });
+        await Promise.all(promises);
+        console.log("projects deleted");
+      }
+
+      const workspaces = await databases.listDocuments(
+        DATABASE_ID,
+        WORKSPACES_ID,
+        []
+      );
+
+      workspaces.documents.forEach(async (ws) => {
+        projects.forEach(async (proj) => {
+          await databases.createDocument(
+            DATABASE_ID,
+            PROJECTS_ID,
+            ID.unique(),
+            {
+              imageUrl: null,
+              workspaceId: ws.$id,
+              name: proj.name,
+            }
+          );
         });
       });
 
