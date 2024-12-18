@@ -10,7 +10,7 @@ const app = new Hono().post("/workspaces", sessionMiddleware, async (c) => {
   const user = c.get("user");
 
   workspaces.forEach(async (ws) => {
-    console.log(ws.name);
+    // console.log(ws.name);
     await databases.createDocument(DATABASE_ID, WORKSPACES_ID, ID.unique(), {
       name: ws.name,
       userId: user.$id,
@@ -19,7 +19,7 @@ const app = new Hono().post("/workspaces", sessionMiddleware, async (c) => {
     });
   });
 
-  return c.json({ data: "hoho" });
+  return c.json({ success: true });
 });
 
 export default app;
