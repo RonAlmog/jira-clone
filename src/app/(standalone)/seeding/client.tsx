@@ -16,27 +16,31 @@ export const SeedingPageClient = () => {
   const { mutate: seedMembers, isPending: isMembersPending } = useSeedMembers();
 
   const handleSeedWorkspaces = () => {
-    const result = seedWorkspaces(undefined, {
-      onSuccess: () => {
-        console.log("success");
-        toast.success("Workspaces seeded");
-      },
-      onError: () => {
-        toast.error("That didnt work well");
-      },
-    });
+    const result = seedWorkspaces(
+      { json: { deleteAll: true } },
+      {
+        onSuccess: () => {
+          toast.success("Workspaces seeded");
+        },
+        onError: () => {
+          toast.error("That didnt work well");
+        },
+      }
+    );
     console.log({ result });
   };
   const handleSeedMembers = () => {
-    const result = seedMembers(undefined, {
-      onSuccess: () => {
-        console.log("success");
-        toast.success("Members seeded");
-      },
-      onError: () => {
-        toast.error("That didnt work well");
-      },
-    });
+    const result = seedMembers(
+      { json: { deleteAll: true } },
+      {
+        onSuccess: () => {
+          toast.success("Members seeded");
+        },
+        onError: () => {
+          toast.error("That didnt work well");
+        },
+      }
+    );
     console.log({ result });
   };
   return (

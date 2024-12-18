@@ -8,15 +8,15 @@ type ResponseType = InferResponseType<
   (typeof client.api.seeding.members)["$post"],
   200
 >;
-// type RequestType = InferRequestType<
-//   (typeof client.api.seeding)["workspaces"]["$post"]
-// >;
+type RequestType = InferRequestType<
+  (typeof client.api.seeding.members)["$post"]
+>;
 
 export const useSeedMembers = () => {
   const queryClient = useQueryClient();
-  const mutation = useMutation<ResponseType, Error>({
-    mutationFn: async () => {
-      const response = await client.api.seeding.members["$post"]();
+  const mutation = useMutation<ResponseType, Error, RequestType>({
+    mutationFn: async ({ json }) => {
+      const response = await client.api.seeding.members["$post"]({ json });
       if (!response.ok) {
         throw new Error("Failed to seed members");
       }
