@@ -2,12 +2,21 @@ import { sessionMiddleware } from "@/lib/session-middleware";
 import { Hono } from "hono";
 import { workspaces } from "../data/workspaces";
 import { projects } from "../data/projects";
-import { DATABASE_ID, MEMBERS_ID, PROJECTS_ID, WORKSPACES_ID } from "@/config";
-import { ID } from "node-appwrite";
+import { tasks } from "../data/tasks";
+import {
+  DATABASE_ID,
+  MEMBERS_ID,
+  PROJECTS_ID,
+  TASKS_ID,
+  WORKSPACES_ID,
+} from "@/config";
+import { ID, Query } from "node-appwrite";
 import { generateInviteCode } from "@/lib/utils";
 import { MemberRole } from "@/features/members/types";
 import { deleteAllSchema } from "../schemas";
 import { zValidator } from "@hono/zod-validator";
+import { TaskStatus } from "@/features/tasks/types";
+import { addDays } from "date-fns";
 
 const app = new Hono()
   .post(
@@ -158,6 +167,82 @@ const app = new Hono()
       });
 
       return c.json({ success: true });
+    }
+  )
+  .post(
+    "/tasks",
+    sessionMiddleware,
+    zValidator("json", deleteAllSchema),
+    async (c) => {
+      const databases = c.get("databases");
+      const { deleteAll } = c.req.valid("json");
+
+      // delete all before seeding
+      if (deleteAll) {
+        const existingTasks = await databases.listDocuments(
+          DATABASE_ID,
+          TASKS_ID,
+          []
+        );
+        const promises: Promise<unknown>[] = [];
+        existingTasks.documents.forEach((task) => {
+          const promise = databases.deleteDocument(
+            DATABASE_ID,
+            TASKS_ID,
+            task.$id
+          );
+          promises.push(promise);
+        });
+        await Promise.all(promises);
+        console.log("tasks deleted");
+      }
+
+      // prepare data for seeding
+      const statuses = [
+        TaskStatus.BACKLOG,
+        TaskStatus.TODO,
+        TaskStatus.IN_PROGRESS,
+        TaskStatus.IN_REVIEW,
+        TaskStatus.DONE,
+      ];
+
+      // get all workspaces.
+      // for each one we will add tasks to members
+      const workspaces = await databases.listDocuments(
+        DATABASE_ID,
+        WORKSPACES_ID,
+        []
+      );
+
+      // maybe within each ws? currently global
+      let position = 1000;
+
+      workspaces.documents.forEach(async (ws) => {
+        // find members of this ws
+        const wsMembers = await databases.listDocuments(
+          DATABASE_ID,
+          MEMBERS_ID,
+          [Query.equal("workspaceId", ws.$id)]
+        );
+
+        // create tasks
+
+        tasks.forEach(async (task) => {
+          await databases.createDocument(DATABASE_ID, TASKS_ID, ID.unique(), {
+            workspaceId: ws.$id,
+            name: task.name,
+            description: "lorem ipsum", // task.description,
+            position: position,
+            status: statuses[Math.floor(Math.random() * statuses.length)], // choose random status
+            dueDate: addDays(new Date(), 3 + Math.floor(Math.random() * 30)),
+            assigneeId:
+              wsMembers.documents[
+                Math.floor(Math.random() * wsMembers.documents.length)
+              ],
+          });
+          position += 1000;
+        });
+      });
     }
   );
 
