@@ -40,7 +40,6 @@ const app = new Hono()
       }
 
       workspaces.forEach(async (ws) => {
-        // console.log(ws.name);
         await databases.createDocument(
           DATABASE_ID,
           WORKSPACES_ID,
@@ -64,7 +63,6 @@ const app = new Hono()
     zValidator("json", deleteAllSchema),
     async (c) => {
       const databases = c.get("databases");
-      const user = c.get("user");
       const { deleteAll } = c.req.valid("json");
 
       // delete all before seeding
@@ -93,11 +91,17 @@ const app = new Hono()
         []
       );
 
+      // somewhat awkward way to get ids of all users, because we don't have direct access.
+      const userIds = new Set(workspaces.documents.map((ws) => ws.$id));
+
+      // create members, for every user in every workspace
       workspaces.documents.forEach(async (ws) => {
-        await databases.createDocument(DATABASE_ID, MEMBERS_ID, ID.unique(), {
-          userId: user.$id,
-          workspaceId: ws.$id,
-          role: MemberRole.ADMIN,
+        userIds.forEach(async (userId) => {
+          await databases.createDocument(DATABASE_ID, MEMBERS_ID, ID.unique(), {
+            userId: userId,
+            workspaceId: ws.$id,
+            role: MemberRole.ADMIN,
+          });
         });
       });
 
@@ -110,7 +114,6 @@ const app = new Hono()
     zValidator("json", deleteAllSchema),
     async (c) => {
       const databases = c.get("databases");
-      const user = c.get("user");
       const { deleteAll } = c.req.valid("json");
 
       // delete all projects before seeding

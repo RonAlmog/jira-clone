@@ -9,6 +9,7 @@ import {
   Databases,
   Models,
   Storage,
+  Users,
   type Account as AccountType,
   type Databases as DatabasesType,
   type Storage as StorageType,
@@ -41,6 +42,7 @@ export const sessionMiddleware = createMiddleware<AdditionalContext>(
     const account = new Account(client);
     const databases = new Databases(client);
     const storage = new Storage(client);
+    const users = new Users(client);
 
     const user = await account.get();
 
@@ -48,6 +50,7 @@ export const sessionMiddleware = createMiddleware<AdditionalContext>(
     c.set("databases", databases);
     c.set("storage", storage);
     c.set("user", user);
+    c.set("users", users);
 
     await next();
   }
