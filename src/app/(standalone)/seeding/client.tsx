@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSeedMembers } from "@/features/seeding/api/use-seed-members";
 import { useSeedProjects } from "@/features/seeding/api/use-seed-projects";
+import { useSeedTasks } from "@/features/seeding/api/use-seed-tasks";
 
 import { useSeedWorkspaces } from "@/features/seeding/api/use-seed-workspaces";
 import { Loader } from "lucide-react";
@@ -17,6 +18,7 @@ export const SeedingPageClient = () => {
   const { mutate: seedMembers, isPending: isMembersPending } = useSeedMembers();
   const { mutate: seedProjects, isPending: isPendingProjects } =
     useSeedProjects();
+  const { mutate: seedTasks, isPending: isTasksPending } = useSeedTasks();
 
   const handleSeedWorkspaces = () => {
     const result = seedWorkspaces(
@@ -60,6 +62,20 @@ export const SeedingPageClient = () => {
     );
     console.log({ result });
   };
+  const handleSeedTasks = () => {
+    const result = seedTasks(
+      { json: { deleteAll: true } },
+      {
+        onSuccess: () => {
+          toast.success("Tasks seeded");
+        },
+        onError: () => {
+          toast.error("That didnt work well");
+        },
+      }
+    );
+    console.log({ result });
+  };
   return (
     <div className="flex w-full h-full items-center justify-center">
       <Card className="w-full">
@@ -80,7 +96,10 @@ export const SeedingPageClient = () => {
               {isPendingProjects && <Loader className="size-5 animate-spin" />}
               Projects
             </Button>
-            <Button>Tasks</Button>
+            <Button onClick={handleSeedTasks}>
+              {isTasksPending && <Loader className="size-5 animate-spin" />}
+              Tasks
+            </Button>
           </div>
         </CardContent>
       </Card>

@@ -225,24 +225,40 @@ const app = new Hono()
           [Query.equal("workspaceId", ws.$id)]
         );
 
+        console.log("members", wsMembers);
+
+        // find projects for this ws
+        const wsProjects = await databases.listDocuments(
+          DATABASE_ID,
+          PROJECTS_ID,
+          [Query.equal("workspaceId", ws.$id)]
+        );
+
+        console.log("projects", wsProjects);
+
         // create tasks
 
         tasks.forEach(async (task) => {
-          await databases.createDocument(DATABASE_ID, TASKS_ID, ID.unique(), {
-            workspaceId: ws.$id,
-            name: task.name,
-            description: "lorem ipsum", // task.description,
-            position: position,
-            status: statuses[Math.floor(Math.random() * statuses.length)], // choose random status
-            dueDate: addDays(new Date(), 3 + Math.floor(Math.random() * 30)),
-            assigneeId:
-              wsMembers.documents[
-                Math.floor(Math.random() * wsMembers.documents.length)
-              ],
-          });
-          position += 1000;
+          //   await databases.createDocument(DATABASE_ID, TASKS_ID, ID.unique(), {
+          //     workspaceId: ws.$id,
+          //     name: task.name,
+          //     description: "lorem ipsum", // task.description,
+          //     position: position,
+          //     status: statuses[Math.floor(Math.random() * statuses.length)], // choose random status
+          //     dueDate: addDays(new Date(), 3 + Math.floor(Math.random() * 30)),
+          //     assigneeId:
+          //       wsMembers.documents[
+          //         Math.floor(Math.random() * wsMembers.documents.length - 1)
+          //       ].$id,
+          //     projectId:
+          //       wsProjects.documents[
+          //         Math.floor(Math.random() * wsProjects.documents.length - 1)
+          //       ].$id,
+          //   });
+          //   position += 1000;
         });
       });
+      return c.json({ success: true });
     }
   );
 
