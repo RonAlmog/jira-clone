@@ -101,7 +101,17 @@ const app = new Hono()
       );
 
       // somewhat awkward way to get ids of all users, because we don't have direct access.
-      const userIds = new Set(workspaces.documents.map((ws) => ws.$id));
+      // const userIds = new Set(workspaces.documents.map((ws) => ws.$id));
+
+      const userIds = [
+        "675c56f78e53733556b6",
+        "67631fd60010c2d4962e",
+        "67631f6a002192425bdf",
+        "67631f2100105cab146a",
+        "67631efe0035bc8a40b4",
+        "675c9d29048a645a53e3",
+        "675c56f78e53733556b6",
+      ];
 
       // create members, for every user in every workspace
       workspaces.documents.forEach(async (ws) => {
@@ -176,7 +186,7 @@ const app = new Hono()
     async (c) => {
       const databases = c.get("databases");
       const { deleteAll } = c.req.valid("json");
-
+      console.log("before");
       // delete all before seeding
       if (deleteAll) {
         const existingTasks = await databases.listDocuments(
@@ -196,6 +206,7 @@ const app = new Hono()
         await Promise.all(promises);
         console.log("tasks deleted");
       }
+      console.log("after");
 
       // prepare data for seeding
       const statuses = [
@@ -239,23 +250,23 @@ const app = new Hono()
         // create tasks
 
         tasks.forEach(async (task) => {
-          //   await databases.createDocument(DATABASE_ID, TASKS_ID, ID.unique(), {
-          //     workspaceId: ws.$id,
-          //     name: task.name,
-          //     description: "lorem ipsum", // task.description,
-          //     position: position,
-          //     status: statuses[Math.floor(Math.random() * statuses.length)], // choose random status
-          //     dueDate: addDays(new Date(), 3 + Math.floor(Math.random() * 30)),
-          //     assigneeId:
-          //       wsMembers.documents[
-          //         Math.floor(Math.random() * wsMembers.documents.length - 1)
-          //       ].$id,
-          //     projectId:
-          //       wsProjects.documents[
-          //         Math.floor(Math.random() * wsProjects.documents.length - 1)
-          //       ].$id,
-          //   });
-          //   position += 1000;
+          await databases.createDocument(DATABASE_ID, TASKS_ID, ID.unique(), {
+            workspaceId: ws.$id,
+            name: task.name,
+            description: "lorem ipsum", // task.description,
+            position: position,
+            status: statuses[Math.floor(Math.random() * statuses.length)], // choose random status
+            dueDate: addDays(new Date(), 3 + Math.floor(Math.random() * 30)),
+            assigneeId:
+              wsMembers.documents[
+                Math.floor(Math.random() * wsMembers.documents.length - 1)
+              ].$id,
+            projectId:
+              wsProjects.documents[
+                Math.floor(Math.random() * wsProjects.documents.length - 1)
+              ].$id,
+          });
+          position += 1000;
         });
       });
       return c.json({ success: true });
