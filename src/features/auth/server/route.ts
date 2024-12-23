@@ -36,8 +36,6 @@ const app = new Hono()
   .post("/register", zValidator("json", registerSchema), async (c) => {
     const { name, email, password } = c.req.valid("json");
     const { account } = await createAdminClient();
-    console.log({ email });
-    console.log({ password });
     await account.create(ID.unique(), email, password, name);
 
     const session = await account.createEmailPasswordSession(email, password);

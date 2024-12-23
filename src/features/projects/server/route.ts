@@ -135,7 +135,6 @@ const app = new Hono()
       const user = c.get("user");
 
       const { projectId } = c.req.param();
-      console.log({ projectId });
       const { name, image } = c.req.valid("form");
 
       const existingProject = await databases.getDocument<Project>(

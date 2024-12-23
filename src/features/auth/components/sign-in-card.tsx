@@ -29,10 +29,22 @@ export const SignInCard = () => {
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     mutate({ json: values });
   };
+  const demoCredentials = () => {
+    form.setValue("email", "ron123@gmail.com");
+    form.setValue("password", "12345678");
+  };
   return (
     <Card className="w-full h-full md:w-[487px] border-none shadow-none">
-      <CardHeader className="flex items-center justify-center text-center p-7">
+      <CardHeader className="flex items-center justify-center text-center p-5">
         <CardTitle className="text-2xl">Welcome Back!</CardTitle>
+        <Button
+          onClick={demoCredentials}
+          size="sm"
+          variant="teritary"
+          className="mt-4"
+        >
+          Fill in demo credentials
+        </Button>
       </CardHeader>
       <div className="px-7">
         <DottedSeparator />

@@ -19,7 +19,6 @@ const app = new Hono()
       const databases = c.get("databases");
       const user = c.get("user");
       const { workspaceId } = c.req.valid("query");
-      console.log({ user });
       const member = await getMember({
         databases,
         workspaceId,
@@ -36,18 +35,14 @@ const app = new Hono()
         [Query.equal("workspaceId", workspaceId)]
       );
 
-      console.log({ members });
-
       const populatedMembers = await Promise.all(
         members.documents.map(async (member) => {
           const user = await users.get(member.userId);
-          if (user) {
-            return {
-              ...member,
-              name: user.name || user.email,
-              email: user.email,
-            };
-          }
+          return {
+            ...member,
+            name: user.name || user.email,
+            email: user.email,
+          };
         })
       );
 
