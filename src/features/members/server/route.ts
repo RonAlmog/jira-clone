@@ -36,14 +36,18 @@ const app = new Hono()
         [Query.equal("workspaceId", workspaceId)]
       );
 
+      console.log({ members });
+
       const populatedMembers = await Promise.all(
         members.documents.map(async (member) => {
           const user = await users.get(member.userId);
-          return {
-            ...member,
-            name: user.name || user.email,
-            email: user.email,
-          };
+          if (user) {
+            return {
+              ...member,
+              name: user.name || user.email,
+              email: user.email,
+            };
+          }
         })
       );
 

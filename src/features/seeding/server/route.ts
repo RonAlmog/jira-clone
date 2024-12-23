@@ -104,13 +104,13 @@ const app = new Hono()
       // const userIds = new Set(workspaces.documents.map((ws) => ws.$id));
 
       const userIds = [
-        "675c56f78e53733556b6",
+        "676982bf0008a971d6be",
+        "67646f57c70e289e5b0e",
         "67631fd60010c2d4962e",
         "67631f6a002192425bdf",
         "67631f2100105cab146a",
         "67631efe0035bc8a40b4",
         "675c9d29048a645a53e3",
-        "675c56f78e53733556b6",
       ];
 
       // create members, for every user in every workspace
@@ -234,8 +234,8 @@ const app = new Hono()
           MEMBERS_ID,
           [Query.equal("workspaceId", ws.$id)]
         );
-        console.log("ws:", ws.$id);
-        console.log("members", wsMembers);
+        // console.log("ws:", ws.$id);
+        // console.log("members", wsMembers);
 
         // find projects for this ws
         const wsProjects = await databases.listDocuments(
@@ -253,17 +253,16 @@ const app = new Hono()
             await databases.createDocument(DATABASE_ID, TASKS_ID, ID.unique(), {
               workspaceId: ws.$id,
               name: task.name,
-              description: "lorem ipsum", // task.description,
+              description:
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed cursus, turpis quis aliquam suscipit, velit purus pretium nunc, et congue enim tortor in massa. Sed maximus arcu ut mauris porta, ut lobortis erat hendrerit. Aenean iaculis interdum massa eu pretium.", // task.description,
               position: position,
               status: statuses[Math.floor(Math.random() * statuses.length)], // choose random status
               dueDate: addDays(new Date(), 3 + Math.floor(Math.random() * 30)),
               assigneeId: wsMembers.documents[0].$id,
-              //  [
-              //   Math.floor(Math.random() * wsMembers.documents.length - 1)
+              //   Math.floor(Math.random() * wsMembers.total - 1)
               // ].$id,
               projectId: wsProjects.documents[0].$id,
-              // [
-              //   Math.floor(Math.random() * wsProjects.documents.length - 1)
+              //   Math.floor(Math.random() * wsProjects.total - 1)
               // ].$id,
             });
             position += 1000;
