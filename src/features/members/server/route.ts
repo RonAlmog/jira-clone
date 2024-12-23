@@ -19,7 +19,7 @@ const app = new Hono()
       const databases = c.get("databases");
       const user = c.get("user");
       const { workspaceId } = c.req.valid("query");
-
+      console.log({ user });
       const member = await getMember({
         databases,
         workspaceId,

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSeedDelete } from "@/features/seeding/api/use-seed-delete";
 import { useSeedMembers } from "@/features/seeding/api/use-seed-members";
 import { useSeedProjects } from "@/features/seeding/api/use-seed-projects";
 import { useSeedTasks } from "@/features/seeding/api/use-seed-tasks";
@@ -19,6 +20,7 @@ export const SeedingPageClient = () => {
   const { mutate: seedProjects, isPending: isPendingProjects } =
     useSeedProjects();
   const { mutate: seedTasks, isPending: isTasksPending } = useSeedTasks();
+  const { mutate: deleteAll, isPending: isDeletePending } = useSeedDelete();
 
   const handleSeedWorkspaces = () => {
     const result = seedWorkspaces(
@@ -76,6 +78,21 @@ export const SeedingPageClient = () => {
     );
     console.log({ result });
   };
+
+  const handleDelete = () => {
+    const result = deleteAll(
+      { json: { deleteAll: true } },
+      {
+        onSuccess: () => {
+          toast.success("Tasks seeded");
+        },
+        onError: () => {
+          toast.error("That didnt work well");
+        },
+      }
+    );
+    console.log({ result });
+  };
   return (
     <div className="flex w-full h-full items-center justify-center">
       <Card className="w-full">
@@ -99,6 +116,10 @@ export const SeedingPageClient = () => {
             <Button onClick={handleSeedTasks}>
               {isTasksPending && <Loader className="size-5 animate-spin" />}
               Tasks
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              {isDeletePending && <Loader className="size-5 animate-spin" />}
+              Delete
             </Button>
           </div>
         </CardContent>

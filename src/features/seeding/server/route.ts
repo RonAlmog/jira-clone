@@ -186,7 +186,7 @@ const app = new Hono()
     async (c) => {
       const databases = c.get("databases");
       const { deleteAll } = c.req.valid("json");
-      console.log("before");
+      console.log("seeding tasks");
       // delete all before seeding
       if (deleteAll) {
         const existingTasks = await databases.listDocuments(
@@ -206,7 +206,6 @@ const app = new Hono()
         await Promise.all(promises);
         console.log("tasks deleted");
       }
-      console.log("after");
 
       // prepare data for seeding
       const statuses = [
@@ -235,7 +234,7 @@ const app = new Hono()
           MEMBERS_ID,
           [Query.equal("workspaceId", ws.$id)]
         );
-
+        console.log("ws:", ws.$id);
         console.log("members", wsMembers);
 
         // find projects for this ws
@@ -249,26 +248,120 @@ const app = new Hono()
 
         // create tasks
 
-        tasks.forEach(async (task) => {
-          await databases.createDocument(DATABASE_ID, TASKS_ID, ID.unique(), {
-            workspaceId: ws.$id,
-            name: task.name,
-            description: "lorem ipsum", // task.description,
-            position: position,
-            status: statuses[Math.floor(Math.random() * statuses.length)], // choose random status
-            dueDate: addDays(new Date(), 3 + Math.floor(Math.random() * 30)),
-            assigneeId:
-              wsMembers.documents[
-                Math.floor(Math.random() * wsMembers.documents.length - 1)
-              ].$id,
-            projectId:
-              wsProjects.documents[
-                Math.floor(Math.random() * wsProjects.documents.length - 1)
-              ].$id,
+        if (true) {
+          tasks.forEach(async (task) => {
+            await databases.createDocument(DATABASE_ID, TASKS_ID, ID.unique(), {
+              workspaceId: ws.$id,
+              name: task.name,
+              description: "lorem ipsum", // task.description,
+              position: position,
+              status: statuses[Math.floor(Math.random() * statuses.length)], // choose random status
+              dueDate: addDays(new Date(), 3 + Math.floor(Math.random() * 30)),
+              assigneeId: wsMembers.documents[0].$id,
+              //  [
+              //   Math.floor(Math.random() * wsMembers.documents.length - 1)
+              // ].$id,
+              projectId: wsProjects.documents[0].$id,
+              // [
+              //   Math.floor(Math.random() * wsProjects.documents.length - 1)
+              // ].$id,
+            });
+            position += 1000;
           });
-          position += 1000;
-        });
+        }
       });
+      return c.json({ success: true });
+    }
+  )
+  .post(
+    "/deleteall",
+    sessionMiddleware,
+    zValidator("json", deleteAllSchema),
+    async (c) => {
+      const databases = c.get("databases");
+
+      const { deleteAll } = c.req.valid("json");
+
+      // delete all before seeding
+      if (deleteAll) {
+        const workspaces = await databases.listDocuments(
+          DATABASE_ID,
+          WORKSPACES_ID,
+          []
+        );
+        const promises: Promise<unknown>[] = [];
+        workspaces.documents.forEach((ws) => {
+          const promise = databases.deleteDocument(
+            DATABASE_ID,
+            WORKSPACES_ID,
+            ws.$id
+          );
+          promises.push(promise);
+        });
+        await Promise.all(promises);
+        console.log("workspaces deleted");
+      }
+
+      // delete members
+      if (deleteAll) {
+        const members = await databases.listDocuments(
+          DATABASE_ID,
+          MEMBERS_ID,
+          []
+        );
+        const promises: Promise<unknown>[] = [];
+        members.documents.forEach((member) => {
+          const promise = databases.deleteDocument(
+            DATABASE_ID,
+            MEMBERS_ID,
+            member.$id
+          );
+          promises.push(promise);
+        });
+        await Promise.all(promises);
+        console.log("members deleted");
+      }
+
+      // delete all projects
+      if (deleteAll) {
+        const projects = await databases.listDocuments(
+          DATABASE_ID,
+          PROJECTS_ID,
+          []
+        );
+        const promises: Promise<unknown>[] = [];
+        projects.documents.forEach((project) => {
+          const promise = databases.deleteDocument(
+            DATABASE_ID,
+            PROJECTS_ID,
+            project.$id
+          );
+          promises.push(promise);
+        });
+        await Promise.all(promises);
+        console.log("projects deleted");
+      }
+
+      // delete all tasks
+      if (deleteAll) {
+        const existingTasks = await databases.listDocuments(
+          DATABASE_ID,
+          TASKS_ID,
+          []
+        );
+        const promises: Promise<unknown>[] = [];
+        existingTasks.documents.forEach((task) => {
+          const promise = databases.deleteDocument(
+            DATABASE_ID,
+            TASKS_ID,
+            task.$id
+          );
+          promises.push(promise);
+        });
+        await Promise.all(promises);
+        console.log("tasks deleted");
+      }
+
       return c.json({ success: true });
     }
   );
