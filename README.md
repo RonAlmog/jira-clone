@@ -8,7 +8,7 @@ UI with shadcn/ui.
 
 ## Demo
 
-check out the demo, hosted on vercel [here](jira-clone-ebon.vercel.app)
+check out the demo, hosted on vercel [here](https://jira-clone-ebon.vercel.app)
 
 ### Demo credentials:
 
